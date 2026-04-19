@@ -439,29 +439,7 @@ The final analysed sample comprised 166 participants (AB: *n* = 78; NB: *n* = 88
 
 ## 3.9 Exploratory Analyses
 
-We did 6 additional analyses to better understand the data.
-
-
----
-
-### 3.9.2 Response Time by Frame Type and Condition
-
-We broke down response times by frame type (BB vs EM) within each condition to check whether the overall null RT result (H1b) hid any frame-specific patterns.
-
-| Condition | Frame Type | *M* RT (s) |
-|:----------|:----------:|:----------:|
-| AB | BB | 5.71 |
-| AB | EM | 5.47 |
-| NB | BB | 5.77 |
-| NB | EM | 5.74 |
-
-Both groups were slightly slower for BB than EM frames. NB participants were slightly *slower* overall yet still more *accurate* — ruling out a speed–accuracy trade-off as an explanation for the NB advantage.
-
-*Figure 3.8 — Mean response time by frame type and condition. Error bars are 95% confidence intervals.*
-
-![RT by Frame Type](exploratory_plots/exp_rt_frame_type.png)
-
-### 3.9.3 Exploratory Analysis: Predicting Recognition Accuracy
+###  Exploratory Analysis: Predicting Recognition Accuracy
 
 While our previous tests looked at factors separately, we used a General Linear Model (specifically, a Logistic Regression) to assess $N = 6,640$ trials simultaneously. This allowed us to test how confidence, condition, and frame type (BB vs. EM) jointly predict accuracy. Variance Inflation Factor (VIF) checks confirmed that all predictors were independent ($VIF \approx 1.0$), ensuring the model is stable.
 
@@ -479,9 +457,28 @@ While our previous tests looked at factors separately, we used a General Linear 
 - **Condition Effect:** Even when controlling for confidence and frame type, being in the Natural Boundary condition increased the odds of a correct answer by **20%** ($OR = 1.20$).
 - **Diagnostic Stability:** The $VIF \approx 1.0$ confirms that these factors are independent drivers of recognition accuracy.
 
-*Figure 3.9 — (A) Logistic regression curves showing predicted accuracy probability by confidence. (B) Interaction plot for frame type and condition effects.*
+*Figure  — (A) Logistic regression curves showing predicted accuracy probability by confidence. (B) Interaction plot for frame type and condition effects.*
 
 ![GLM Visuals](exploratory_plots/exp_glm_visuals.png)
+
+---
+
+### Response Time by Frame Type and Condition
+
+We broke down response times by frame type (BB vs EM) within each condition to check whether the overall null RT result (H1b) hid any frame-specific patterns.
+
+| Condition | Frame Type | *M* RT (s) |
+|:----------|:----------:|:----------:|
+| AB | BB | 5.71 |
+| AB | EM | 5.47 |
+| NB | BB | 5.77 |
+| NB | EM | 5.74 |
+
+Both groups were slightly slower for BB than EM frames. NB participants were slightly *slower* overall yet still more *accurate* — ruling out a speed–accuracy trade-off as an explanation for the NB advantage.
+
+*Figure  — Mean response time by frame type and condition. Error bars are 95% confidence intervals.*
+
+![RT by Frame Type](exploratory_plots/exp_rt_frame_type.png)
 
 ---
 
