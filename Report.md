@@ -24,14 +24,14 @@ Each participant watched 45 video clips during encoding 40 unique YouTube Shorts
 
 **Table 1. Measured Variables**
 
-| Variable | Type | Description |
-|---|---|---|
-| Accuracy | Binary | Correctly identified target (1) or incorrect (0) |
-| RT | Cont. (s) | Time from stimulus display to key press |
-| Confidence | Ordinal | Self-rated certainty (1 = low, 5 = high) |
-| Frame Type | Categorical | BB (near boundary) or EM (event middle) |
-| Condition | Categorical | NB (natural boundary) or AB (abrupt boundary) |
-| Enc. Time | Cont. (min) | Total time spent watching videos during encoding |
+| Variable   | Type        | Description                                      |
+| ---------- | ----------- | ------------------------------------------------ |
+| Accuracy   | Binary      | Correctly identified target (1) or incorrect (0) |
+| RT         | Cont. (s)   | Time from stimulus display to key press          |
+| Confidence | Ordinal     | Self-rated certainty (1 = low, 5 = high)         |
+| Frame Type | Categorical | BB (near boundary) or EM (event middle)          |
+| Condition  | Categorical | NB (natural boundary) or AB (abrupt boundary)    |
+| Enc. Time  | Cont. (min) | Total time spent watching videos during encoding |
 
 ---
 
@@ -43,17 +43,17 @@ A total of **185 participants** were recorded, of whom **171** had usable behavi
 
 **Table 2. Participant Demographics by Condition**
 
-| Variable | Category | AB | NB |
-|---|---|---|---|
-| **Age** | Range (years) | 19--34 | 19--34 |
-| | Mean (SD) | 22.3 (2.3) | 22.3 (2.4) |
-| **Gender** | Male | 55 | 58 |
-| | Female | 27 | 23 |
-| **Handedness** | Right-handed | 79 | 75 |
-| | Left-handed | 3 | 6 |
-| **Vision** | Normal | 44 | 40 |
-| | Corrected | 38 | 39 |
-| | Uncorrected | 0 | 2 |
+| Variable       | Category      | AB         | NB         |
+| -------------- | ------------- | ---------- | ---------- |
+| **Age**        | Range (years) | 19--34     | 19--34     |
+|                | Mean (SD)     | 22.3 (2.3) | 22.3 (2.4) |
+| **Gender**     | Male          | 55         | 58         |
+|                | Female        | 27         | 23         |
+| **Handedness** | Right-handed  | 79         | 75         |
+|                | Left-handed   | 3          | 6          |
+| **Vision**     | Normal        | 44         | 40         |
+|                | Corrected     | 38         | 39         |
+|                | Uncorrected   | 0          | 2          |
 
 ### 4.2 Data Cleaning
 
@@ -64,11 +64,11 @@ A total of **185 participants** were recorded, of whom **171** had usable behavi
 **Table 3. Participants Excluded for Excessive Encoding Time**
 
 | Participant | Condition | Enc. Time (min) |
-|---|---|---|
-| sub32 | AB | 27.33 |
-| sub36 | AB | 27.77 |
-| sub151 | NB | 27.16 |
-| sub161 | NB | 28.00 |
+| ----------- | --------- | --------------- |
+| sub32       | AB        | 27.33           |
+| sub36       | AB        | 27.77           |
+| sub151      | NB        | 27.16           |
+| sub161      | NB        | 28.00           |
 
 **Response time outliers.** Trials with RT < 0.2 s or RT > 60 s were excluded. One outlier was identified: sub28 (AB, Movie 8, RT = 71.09 s).
 
@@ -85,68 +85,68 @@ After all exclusions, the **final analysed sample comprised 166 participants** (
 Based on Event Segmentation Theory, we came up with six hypotheses.
 
 **H1 — Effect of Condition**
-| Property | Detail |
-|---|---|
-| **IV** | Viewing condition (NB vs. AB) — between subjects |
-| **DV** | Mean recognition accuracy, mean RT (s) |
-| $H_0$ | No difference in accuracy or RT between NB and AB |
-| $H_A$ | Participants in the NB condition will show higher overall recognition accuracy and faster response times than participants in the AB condition. |
-| **Direction** | One-tailed (NB > AB accuracy; NB < AB RT) |
-| **Test** | Mann-Whitney U test \& trial-level Regression |
+| Property      | Detail                                                                                                                                          |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **IV**        | Viewing condition (NB vs. AB) — between subjects                                                                                                |
+| **DV**        | Mean recognition accuracy, mean RT (s)                                                                                                          |
+| $H_0$         | No difference in accuracy or RT between NB and AB                                                                                               |
+| $H_A$         | Participants in the NB condition will show higher overall recognition accuracy and faster response times than participants in the AB condition. |
+| **Direction** | One-tailed (NB > AB accuracy; NB < AB RT)                                                                                                       |
+| **Test**      | Mann-Whitney U test \& trial-level Regression                                                                                                   |
 
 **H2 — Effect Larger for BB Frames**
-| Property | Detail |
-|---|---|
-| **IV** | Viewing condition (NB vs. AB) — between subjects |
-| **DV** | Mean recognition accuracy for BB frames |
-| $H_0$ | No difference in BB accuracy between conditions |
-| $H_A$ | Recognition accuracy will be greater for before-boundary (BB) frames than for event-middle (EM) frames. Reflecting NB advantage |
-| **Direction** | One-tailed (Accuracy : BB > EM) |
-| **Test** | Independent-samples $t$-test |
+| Property      | Detail                                                                                                                          |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **IV**        | Viewing condition (NB vs. AB) — between subjects                                                                                |
+| **DV**        | Mean recognition accuracy for BB frames                                                                                         |
+| $H_0$         | No difference in BB accuracy between conditions                                                                                 |
+| $H_A$         | Recognition accuracy will be greater for before-boundary (BB) frames than for event-middle (EM) frames. Reflecting NB advantage |
+| **Direction** | One-tailed (Accuracy : BB > EM)                                                                                                 |
+| **Test**      | Independent-samples $t$-test                                                                                                    |
 
 **H3 — No Condition Effect for EM Frames**
-| Property | Detail |
-|---|---|
-| **IV** | Viewing condition (NB vs. AB) — between subjects |
-| **DV** | Mean recognition accuracy for EM frames |
-| $H_0$ | Recognition accuracy for EM frames will not differ significantly between the NB and AB groups. |
-| $H_A$ | Significant difference in EM accuracy |
-| **Direction** | Two-tailed (EM frames are away from the manipulation point) |
-| **Test** | Independent-samples $t$-test |
+| Property      | Detail                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------- |
+| **IV**        | Viewing condition (NB vs. AB) — between subjects                                               |
+| **DV**        | Mean recognition accuracy for EM frames                                                        |
+| $H_0$         | Recognition accuracy for EM frames will not differ significantly between the NB and AB groups. |
+| $H_A$         | Significant difference in EM accuracy                                                          |
+| **Direction** | Two-tailed (EM frames are away from the manipulation point)                                    |
+| **Test**      | Independent-samples $t$-test                                                                   |
 
 **H4 — Confidence Calibration**
-| Property | Detail |
-|---|---|
-| **IV** | Trial outcome (correct / incorrect) — within subjects |
-| **DV** | Mean confidence rating (1--5 scale) |
-| $H_0$ | Confidence equal for correct and incorrect trials within each condition (AB and NB) |
-| $H_A$ | Within each condition (AB and NB), confidence ratings will be higher for correctly recognised trials than for incorrectly recognised trials |
-| **Direction** | One-tailed |
-| **Test** | Shapiro-Wilk (normality) $\rightarrow$ Paired $t$-test (if normal) or Wilcoxon Signed-Rank (if non-normal), applied separately per condition |
+| Property      | Detail                                                                                                                                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **IV**        | Trial outcome (correct / incorrect) — within subjects                                                                                        |
+| **DV**        | Mean confidence rating (1--5 scale)                                                                                                          |
+| $H_0$         | Confidence equal for correct and incorrect trials within each condition (AB and NB)                                                          |
+| $H_A$         | Within each condition (AB and NB), confidence ratings will be higher for correctly recognised trials than for incorrectly recognised trials  |
+| **Direction** | One-tailed                                                                                                                                   |
+| **Test**      | Shapiro-Wilk (normality) $\rightarrow$ Paired $t$-test (if normal) or Wilcoxon Signed-Rank (if non-normal), applied separately per condition |
 
 **H5 — Confidence by Frame Type**
-| Property | Detail |
-|---|---|
-| **IV** | Frame type (BB vs. EM) — within subjects |
-| **DV** | Mean confidence rating (1--5 scale) |
-| $H_0$ | Confidence equal for BB and EM trials |
-| $H_A$ | Confidence ratings will be higher for BB trials than for EM trials. |
-| **Direction** | One-tailed |
-| **Test** | Shapiro-Wilk (normality) $\rightarrow$ Paired $t$-test (if normal) or Wilcoxon Signed-Rank (if non-normal), and trial-level OLS Regression |
+| Property      | Detail                                                                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **IV**        | Frame type (BB vs. EM) — within subjects                                                                                                   |
+| **DV**        | Mean confidence rating (1--5 scale)                                                                                                        |
+| $H_0$         | Confidence equal for BB and EM trials                                                                                                      |
+| $H_A$         | Confidence ratings will be higher for BB trials than for EM trials.                                                                        |
+| **Direction** | One-tailed                                                                                                                                 |
+| **Test**      | Shapiro-Wilk (normality) $\rightarrow$ Paired $t$-test (if normal) or Wilcoxon Signed-Rank (if non-normal), and trial-level OLS Regression |
 
 **H6 — Demographic Balance**
-| Property | Detail |
-|---|---|
-| **IV** | Viewing condition (NB vs. AB) — between subjects |
-| **DV** | Age; gender; handedness; vision status |
-| $H_0$ | The NB and AB groups will not differ significantly on age, gender distribution, handedness distribution, or vision status. |
-| $H_A$ | Demographic distributions differ significantly |
-| **Direction** | Two-tailed |
-| **Test** | Independent $t$-test (age); $\chi^2$ test (categorical variables) |
+| Property      | Detail                                                                                                                     |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **IV**        | Viewing condition (NB vs. AB) — between subjects                                                                           |
+| **DV**        | Age; gender; handedness; vision status                                                                                     |
+| $H_0$         | The NB and AB groups will not differ significantly on age, gender distribution, handedness distribution, or vision status. |
+| $H_A$         | Demographic distributions differ significantly                                                                             |
+| **Direction** | Two-tailed                                                                                                                 |
+| **Test**      | Independent $t$-test (age); $\chi^2$ test (categorical variables)                                                          |
 
 ### 4.4 Statistical Analysis
 
-Normality of distributions was verified using the Shapiro-Wilk test and homogeneity of variance using Levene's test before each inferential test. Because the data violated normality for two conditions for H1, we used **Mann-Whitney U test**. For H4, where the NB group's difference scores were non-normal, the Wilcoxon Signed-Rank test was substituted for the paired $t$-test. For H6 age, where both group distributions were non-normal, the Mann-Whitney U test was used. The significance threshold was $\alpha = 0.05$ throughout. Also implemented regression models in H1 \& H5 to evaluate predictive effects without losing trial-level variability.
+Normality of distributions was verified using the Shapiro-Wilk test before each inferential test. Because the data violated normality for H1 (accuracy and RT), H2 (BB frames), and H3 (EM frames) across both groups, we used the non-parametric **Mann-Whitney U test** in all these cases. For H4, where the NB group's difference scores were non-normal ($W = 0.967, p = .025$), the Wilcoxon Signed-Rank test was substituted for the paired $t$-test. For H6 age, the Mann-Whitney U test was similarly applied. In addition to these participant-level tests, we fitted **trial-level Logistic GLMs** (accuracy $\sim$ condition) separately for BB frames (H2) and EM frames (H3) to obtain Odds Ratios and confirm that condition remains a significant predictor at the trial level. Variance Inflation Factor (VIF) checks confirmed predictor independence ($VIF = 1.000$ for condition in all models). The significance threshold was $\alpha = 0.05$ throughout.
 
 ---
 
@@ -183,17 +183,17 @@ Contrary to our prediction, both group medians (which provide a good measure alo
 
 **Rationale:** The boundary advantage predicts that frames just before a natural boundary benefit from heightened perceptual and attentional processing. In the AB condition, the artificial early cut eliminates this encoding boost for BB frames.
 
-Normality tests showed non-normal distributions, but sample sizes were sufficient. Variance homogeneity was confirmed.
+**Normality check.** The Shapiro-Wilk test confirmed that BB-frame accuracy distributions were significantly non-normal in both the AB group ($W = 0.946, p = .002$) and the NB group ($W = 0.925, p < .001$). Consequently, the independent-samples $t$-test was replaced by the **Mann-Whitney U test**.
 
 **Table 5.1. Mean BB-frame recognition accuracy**
-| Group | $M$ | $SD$ | $n$ |
-|---|---|---|---|
-| AB | 0.822 | 0.105 | 78 |
-| NB | 0.857 | 0.097 | 88 |
+| Group | $M$   | $SD$  | $Mdn$ | $n$ |
+| ----- | ----- | ----- | ----- | --- |
+| AB    | 0.823 | 0.106 | 0.850 | 77  |
+| NB    | 0.855 | 0.096 | 0.850 | 87  |
 
-NB participants ($M = 0.857$) achieved significantly higher BB-frame accuracy than AB participants ($M = 0.822$), $t(164) = -2.195$, $p = .030$, indicating that the natural encoding boost for boundary-adjacent frames is weakened when the boundary is artificially cut off.
+NB participants ($M = 0.855$, $Mdn = 0.850$) achieved significantly higher BB-frame accuracy than AB participants ($M = 0.823$, $Mdn = 0.850$): $U = 2705.5$, $p = .032$, rank-biserial $r = 0.192$. This confirms that the natural encoding boost for boundary-adjacent frames is weakened when the boundary is artificially cut off. A trial-level **Logistic GLM** (accuracy $\sim$ condition, BB trials only) corroborated this: being in the NB condition significantly increased the log-odds of a correct response ($B = 0.241$, $z = 2.526$, $p = .012$, $OR = 1.272$, $VIF_{\text{condition}} = 1.000$).
 
-**H2:** Since $t(164) = -2.195$ and $p = .030 < \alpha = .05$, we **reject the null hypothesis** and **support the alternative hypothesis** ($H_A$: NB participants show higher BB-frame accuracy than AB participants).
+**H2:** Since $U = 2705.5$ and $p = .032 < \alpha = .05$ (confirmed by GLM $p = .012$), we **reject the null hypothesis** and **support the alternative hypothesis** ($H_A$: NB participants show higher BB-frame accuracy than AB participants). Effect size is small-to-medium (rank-biserial $r = 0.192$).
 
 ### 5.3 H3 --- Recognition Accuracy for Event-Middle Frames
 
@@ -201,15 +201,17 @@ NB participants ($M = 0.857$) achieved significantly higher BB-frame accuracy th
 
 **Rationale:** If the boundary effect only strengthens memory for moments immediately surrounding the boundary, frames from the event middle should be encoded similarly regardless of condition.
 
+**Normality check.** The Shapiro-Wilk test confirmed non-normality for EM-frame accuracy in both the AB group ($W = 0.923, p < .001$) and the NB group ($W = 0.914, p < .001$). Consequently, the **Mann-Whitney U test** was used.
+
 **Table 5.2. Mean EM-frame recognition accuracy**
-| Group | $M$ | $SD$ | $n$ |
-|---|---|---|---|
-| AB | 0.853 | 0.093 | 78 |
-| NB | 0.884 | 0.079 | 88 |
+| Group | $M$   | $SD$  | $Mdn$ | $n$ |
+| ----- | ----- | ----- | ----- | --- |
+| AB    | 0.852 | 0.093 | 0.850 | 77  |
+| NB    | 0.884 | 0.080 | 0.900 | 87  |
 
-Contrary to prediction, NB participants ($M = 0.884$) were also significantly more accurate on EM frames than AB participants ($M = 0.853$), $t(164) = -2.319$, $p = .022$. The accuracy drop in the AB group was uniform across both BB and EM frames, suggesting that an abrupt cut hurts memory for the whole clip.
+Contrary to prediction, NB participants ($M = 0.884$, $Mdn = 0.900$) were also significantly more accurate on EM frames than AB participants ($M = 0.852$, $Mdn = 0.850$): $U = 2648.0$, $p = .019$, rank-biserial $r = 0.209$. A trial-level **Logistic GLM** (accuracy $\sim$ condition, EM trials only) confirmed the condition effect: being in the NB condition significantly increased accuracy log-odds ($B = 0.280$, $z = 2.701$, $p = .007$, $OR = 1.323$, $VIF_{\text{condition}} = 1.000$). The accuracy drop in the AB group was therefore uniform across both BB and EM frames, suggesting that an abrupt cut impairs memory for the entire clip, not only boundary-adjacent content.
 
-**H3:** Since $t(164) = -2.319$ and $p = .022 < \alpha = .05$ at the raw level, we **fail to retain the null hypothesis** ($H_0$: no difference in EM-frame accuracy) in the uncorrected test.
+**H3:** Since $U = 2648.0$ and $p = .019 < \alpha = .05$ (GLM $p = .007$), we **fail to retain the null hypothesis** ($H_0$: no difference in EM-frame accuracy). Contrary to prediction, the boundary disruption generalises beyond BB frames.
 
 *Figure 5.2 --- H2 \& H3: Mean recognition accuracy by frame type (BB, EM) and condition.*
 ![H2 H3 Frame Type](plots/h2_h3_frame_type.png)
@@ -225,10 +227,10 @@ One participant who made no errors across the session was excluded from this spe
 We first evaluated the normality of the differences in confidence ratings using the Shapiro-Wilk test. For the AB group, the distribution was normal ($W = 0.975, p = .134$), leading to a paired $t$-test. For the NB group, the distribution was non-normal ($W = 0.969, p = .033$), requiring the Wilcoxon Signed-Rank test.
 
 **Table 5.3. H4 Results: Confidence Calibration by Condition**
-| Group | Correct $M$ | Incorr. $M$ | Test | Stat | $p$ | Effect Size |
-|---|---|---|---|---|---|---|
-| AB | 4.201 | 3.362 | $t$-test | $t = 12.562$ | $< .001$ | $d = 1.422$ |
-| NB | 4.311 | 3.356 | Wilcoxon | $W = 50.5$ | $< .001$ | $r = 0.971$ |
+| Group | Correct $M$ | Incorr. $M$ | Test     | Stat         | $p$      | Effect Size |
+| ----- | ----------- | ----------- | -------- | ------------ | -------- | ----------- |
+| AB    | 4.201       | 3.362       | $t$-test | $t = 12.562$ | $< .001$ | $d = 1.422$ |
+| NB    | 4.311       | 3.356       | Wilcoxon | $W = 50.5$   | $< .001$ | $r = 0.971$ |
 
 In both conditions, participants were significantly more confident when correct than when incorrect ($p < .001$), with the effect consistently in the predicted direction (**Correct > Incorrect**). Effect sizes were very large ($d = 1.422, r = 0.971$).
 
@@ -259,12 +261,12 @@ We also did a trial-level **OLS Linear Regression** predicting confidence ($conf
 We first evaluated the normality of the age distribution using the Shapiro-Wilk test. Age was found to be significantly non-normal in both AB ($W = 0.855, p < .001$) and NB ($W = 0.929, p < .001$) groups. Consequently, an independent-samples Mann-Whitney U test was used for age. Categorical variables were tested using Chi-square tests of independence.
 
 **Table 5.5. Demographic Balance Checks**
-| Variable | AB | NB | Test | Stat | $p$ |
-|---|---|---|---|---|---|
-| Age | Mdn=22.3 | Mdn=22.0 | Mann-Whitney U | $U = 4391.5$ | $.564$ |
-| Gender | 51M, 27F | 55M, 33F | Chi-square | $\chi^2(1) = 0.205$ | $.651$ |
-| Handedness | 71R, 7L | 83R, 5L | Chi-square | $\chi^2(1) = 0.491$ | $.484$ |
-| Vision | 46N, 32C | 45N, 43C | Chi-square | $\chi^2(2) = 2.161$ | $.339$ |
+| Variable   | AB       | NB       | Test           | Stat                | $p$    |
+| ---------- | -------- | -------- | -------------- | ------------------- | ------ |
+| Age        | Mdn=22.3 | Mdn=22.0 | Mann-Whitney U | $U = 4391.5$        | $.564$ |
+| Gender     | 51M, 27F | 55M, 33F | Chi-square     | $\chi^2(1) = 0.205$ | $.651$ |
+| Handedness | 71R, 7L  | 83R, 5L  | Chi-square     | $\chi^2(1) = 0.491$ | $.484$ |
+| Vision     | 46N, 32C | 45N, 43C | Chi-square     | $\chi^2(2) = 2.161$ | $.339$ |
 
 There were no significant differences between groups on any demographic factor (all $p > .05$), confirming that random assignment produced balanced experimental groups.
 
@@ -274,10 +276,10 @@ There were no significant differences between groups on any demographic factor (
 ![H6 Demographics](plots/h6_demographics.png)
 
 **Table 5.6. Participant-level means by condition**
-| Variable | AB ($n = 78$) | NB ($n = 88$) |
-|---|---|---|
-| Accuracy ($M$, $SD$) | 0.84 (0.08) | 0.87 (0.07) |
-| RT in s ($M$, $SD$) | 5.57 (1.42) | 5.75 (1.63) |
+| Variable             | AB ($n = 78$) | NB ($n = 88$) |
+| -------------------- | ------------- | ------------- |
+| Accuracy ($M$, $SD$) | 0.84 (0.08)   | 0.87 (0.07)   |
+| RT in s ($M$, $SD$)  | 5.57 (1.42)   | 5.75 (1.63)   |
 
 ---
 
@@ -286,12 +288,12 @@ There were no significant differences between groups on any demographic factor (
 While our previous tests looked at factors separately, we used a General Linear Model (Logistic Regression) to assess trials simultaneously ($N = 6,640$). This allowed us to test how confidence, experimental condition, and frame type (BB vs. EM) jointly predict accuracy. 
 
 **Table 6.1. Logistic Regression Results for Recognition Accuracy**
-| Predictor | Coef ($B$) | $z$ | $p$ | Odds Ratio |
-|---|---|---|---|---|
-| Intercept | $-0.692$ | $-5.99$ | $<.001$ | $0.50$ |
-| Condition (NB) | $0.183$ | $2.51$ | $.012$ | $1.20$ |
-| Frame Type (EM) | $0.208$ | $2.84$ | $.004$ | $1.23$ |
-| Confidence | $0.589$ | $21.21$ | $<.001$ | $1.80$ |
+| Predictor       | Coef ($B$) | $z$     | $p$     | Odds Ratio |
+| --------------- | ---------- | ------- | ------- | ---------- |
+| Intercept       | $-0.692$   | $-5.99$ | $<.001$ | $0.50$     |
+| Condition (NB)  | $0.183$    | $2.51$  | $.012$  | $1.20$     |
+| Frame Type (EM) | $0.208$    | $2.84$  | $.004$  | $1.23$     |
+| Confidence      | $0.589$    | $21.21$ | $<.001$ | $1.80$     |
 
 Confidence was the strongest independent predictor of accuracy; for every 1-point increase in subjective confidence, the odds of a correct answer increased by 80.2% ($OR = 1.80$). Both condition and frame type were also significant predictors, confirming that even when controlling for confidence, the natural-boundary advantage remains. Variance Inflation Factor (VIF) checks confirmed that all predictors were independent ($VIF \approx 1.0$), ensuring the model is stable.
 
@@ -302,8 +304,9 @@ Confidence was the strongest independent predictor of accuracy; for every 1-poin
 
 ## 7. Summary of Findings
 
-- **Accuracy (H1a):** Cutting a clip early significantly reduced recognition accuracy, as confirmed by the non-parametric tests ($U=2550.5, p=.0042$) and trial-level Logistic Regression models ($p<.001$). The effects were statistically significant for accuracy.
-- **EM frames (H3):** The EM accuracy difference was also significant at the raw level ($p = .022$), contradicting the prediction of no difference. The boundary disruption appears to impair the whole event clip, not just boundary-adjacent frames.
+- **Accuracy (H1a):** Cutting a clip early significantly reduced recognition accuracy, confirmed by Mann-Whitney U test ($U=2550.5, p=.0042$) and trial-level Logistic Regression ($p<.001$).
+- **BB frames (H2):** Shapiro-Wilk confirmed non-normality; Mann-Whitney U ($U = 2705.5$, $p = .032$, $r = 0.192$) showed NB participants were significantly more accurate on BB frames. Trial-level GLM confirmed: $OR = 1.272$, $p = .012$. The boundary advantage for encoding-adjacent frames is real.
+- **EM frames (H3):** Contrary to the null prediction, EM accuracy also differed significantly ($U = 2648.0$, $p = .019$, $r = 0.209$; GLM: $OR = 1.323$, $p = .007$). The boundary disruption appears to impair memory for the whole clip, not only boundary-adjacent frames.
 - **Response time (H1b):** No meaningful difference. NB participants were even slightly slower, ruling out a speed--accuracy trade-off.
 - **Confidence (H4):** The strongest result --- participants were substantially more confident when correct than incorrect (AB: $d = 1.42$; NB: $r = 0.97$), demonstrating reliable metacognitive sensitivity.
 - **Confidence by frame type (H5):** The AB group showed *lower* confidence for BB than EM frames --- the opposite of the prediction. No effect in the NB group.

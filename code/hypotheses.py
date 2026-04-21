@@ -4,6 +4,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
+import warnings
+
+# statsmodels – used for Logistic GLM and VIF
+try:
+    import statsmodels.api as sm
+    from statsmodels.stats.outliers_influence import variance_inflation_factor
+    _SM_AVAILABLE = True
+except ImportError:
+    _SM_AVAILABLE = False
+    warnings.warn("statsmodels not found. GLM and VIF sections will be skipped.")
 
 from config import PLOT_DIR, CONDITION_COLORS, FRAME_COLORS
 from corrections import cohens_d
@@ -123,36 +133,117 @@ def plot_h1_rt(trials_df):
     return ('H1_RT', p_val)
 
 
+# ────────────────────────────────────────────────────────────────────────────
+# HELPER: run a Logistic GLM of accuracy ~ condition for a frame-type subset
+# ────────────────────────────────────────────────────────────────────────────
+def _run_logistic_glm_for_frame(trials_df, frame_type, hypothesis_label):
+    """Run a trial-level Logistic Regression predicting accuracy from condition
+    for a specific frame type.  Prints a clean results table and VIF check."""
+    if not _SM_AVAILABLE:
+        print(f"  [SKIP] statsmodels unavailable — GLM for {hypothesis_label} skipped.")
+        return None
+
+    subset = trials_df[trials_df['frame_type'] == frame_type].copy()
+    subset = subset.dropna(subset=['accuracy', 'condition'])
+
+    # Encode condition as binary (NB = 1, AB = 0)
+    subset['is_nb'] = (subset['condition'] == 'NB').astype(int)
+
+    y = subset['accuracy']
+    X = sm.add_constant(subset[['is_nb']], has_constant='add')
+
+    # VIF check (requires ≥2 predictors; const + is_nb)
+    vif_data = pd.DataFrame()
+    vif_data['Feature'] = X.columns
+    vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+    print(f"\n  ── VIF Check ({hypothesis_label} — {frame_type} frames) ──")
+    for _, row in vif_data.iterrows():
+        flag = "  ⚠ HIGH" if row['VIF'] > 5 else ""
+        print(f"    {row['Feature']:20s}  VIF = {row['VIF']:.3f}{flag}")
+
+    try:
+        model = sm.GLM(y.astype(float), X.astype(float),
+                       family=sm.families.Binomial()).fit()
+    except Exception as e:
+        print(f"  [ERROR] GLM failed: {e}")
+        return None
+
+    coef  = model.params['is_nb']
+    z_val = model.tvalues['is_nb']
+    p_val = model.pvalues['is_nb']
+    or_   = np.exp(coef)
+
+    print(f"\n  ── Logistic GLM : accuracy ~ condition  ({hypothesis_label} — {frame_type} frames) ──")
+    print(f"  {'Predictor':<22} {'Coef (B)':>10} {'z':>8} {'p':>10} {'Odds Ratio':>12}")
+    print(f"  {'-'*64}")
+    print(f"  {'Condition (NB vs AB)':<22} {coef:>10.3f} {z_val:>8.3f} {p_val:>10.4f} {or_:>12.3f}")
+    sig = "*" if p_val < 0.05 else "(n.s.)"
+    print(f"  Significance at α=0.05: {sig}")
+    print(f"  Interpretation: Being in NB condition {'INCREASES' if coef > 0 else 'DECREASES'} "
+          f"log-odds of accuracy by {abs(coef):.3f} "
+          f"(OR = {or_:.3f}, {'p < 0.05' if p_val < 0.05 else f'p = {p_val:.4f}'}).")
+
+    return {'coef': coef, 'z': z_val, 'p': p_val, 'or': or_}
+
+
 def plot_h2_h3_frame_type(trials_df):
-    """H2 & H3 — Accuracy by frame type (BB vs EM) across conditions."""
+    """H2 & H3 — Accuracy by frame type (BB vs EM) with rigorous inference pipeline.
+
+    Analysis pipeline for each frame type (BB → H2, EM → H3):
+      1. Compute participant-level mean accuracy per condition.
+      2. Shapiro-Wilk normality check on each group.
+      3. Branching:
+           Normal  → Independent-samples t-test  (report t, df, p, Cohen's d)
+           Non-normal → Mann-Whitney U test       (report U, p, rank-biserial r)
+      4. Trial-level Logistic GLM: accuracy ~ condition  (OR, z, p)
+      5. VIF check to confirm predictor independence.
+    """
     print("\n" + "=" * 70)
-    print("H2 & H3 — Accuracy by Frame Type × Condition")
-    print("Test: Independent t-tests on BB and EM subsets")
+    print("H2 — Effect Larger for BB Frames  |  H3 — No Condition Effect for EM Frames")
+    print("Rigorous Analysis Pipeline: Shapiro-Wilk → t-test / Mann-Whitney U + Logistic GLM")
     print("=" * 70)
 
     valid = trials_df.dropna(subset=['frame_type', 'accuracy'])
-    subj_frame_acc = valid.groupby(['subject_id', 'condition', 'frame_type'])['accuracy'].mean().reset_index()
+    subj_frame_acc = (
+        valid
+        .groupby(['subject_id', 'condition', 'frame_type'])['accuracy']
+        .mean()
+        .reset_index()
+    )
 
+    # ─── Visualisation (unchanged style) ────────────────────────────────────
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    fig.suptitle('H2 & H3: Accuracy by Frame Type × Condition\n(Independent t-tests)',
-                 fontsize=14, fontweight='bold')
+    fig.suptitle(
+        'H2 & H3: Accuracy by Frame Type × Condition\n'
+        '(Shapiro-Wilk → t-test / Mann-Whitney U)',
+        fontsize=14, fontweight='bold'
+    )
 
-    # Grouped bar chart
     ax = axes[0]
-    pivot = subj_frame_acc.groupby(['condition', 'frame_type'])['accuracy'].agg(['mean', 'sem']).reset_index()
+    pivot = (
+        subj_frame_acc
+        .groupby(['condition', 'frame_type'])['accuracy']
+        .agg(['mean', 'sem'])
+        .reset_index()
+    )
     x = np.arange(2)
     width = 0.35
-
     for i, ft in enumerate(['BB', 'EM']):
         data = pivot[pivot['frame_type'] == ft]
         offset = (i - 0.5) * width
-        bars = ax.bar(x + offset, data['mean'].values, width, yerr=data['sem'].values,
-                      label=f'{ft} ({"Before Boundary" if ft == "BB" else "Event Middle"})',
-                      color=FRAME_COLORS[ft], edgecolor='white', capsize=5, alpha=0.85)
+        bars = ax.bar(
+            x + offset, data['mean'].values, width,
+            yerr=data['sem'].values,
+            label=f'{ft} ({"Before Boundary" if ft == "BB" else "Event Middle"})',
+            color=FRAME_COLORS[ft], edgecolor='white', capsize=5, alpha=0.85
+        )
         for bar, m in zip(bars, data['mean'].values):
-            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
-                    f'{m:.3f}', ha='center', fontsize=9, fontweight='bold')
-
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 0.02,
+                f'{m:.3f}', ha='center', fontsize=9, fontweight='bold'
+            )
     ax.set_xticks(x)
     ax.set_xticklabels(['AB (Abrupt Cut)', 'NB (Natural Cut)'])
     ax.set_ylabel('Mean Accuracy')
@@ -160,50 +251,199 @@ def plot_h2_h3_frame_type(trials_df):
     ax.legend()
     ax.set_ylim(0, 1)
 
-    # Interaction plot
     ax = axes[1]
     for ft, color in FRAME_COLORS.items():
         means, sems = [], []
         for cond in ['AB', 'NB']:
-            subset = subj_frame_acc[(subj_frame_acc['condition'] == cond) &
-                                     (subj_frame_acc['frame_type'] == ft)]
+            subset = subj_frame_acc[
+                (subj_frame_acc['condition'] == cond) &
+                (subj_frame_acc['frame_type'] == ft)
+            ]
             means.append(subset['accuracy'].mean())
             sems.append(subset['accuracy'].sem())
-        ax.errorbar(['AB', 'NB'], means, yerr=sems, marker='o', markersize=10,
-                    linewidth=2.5, label=ft, color=color, capsize=5)
+        ax.errorbar(
+            ['AB', 'NB'], means, yerr=sems,
+            marker='o', markersize=10, linewidth=2.5,
+            label=ft, color=color, capsize=5
+        )
     ax.set_xlabel('Condition')
     ax.set_ylabel('Mean Accuracy')
     ax.set_title('Interaction Plot')
     ax.legend(title='Frame Type')
     ax.set_ylim(0, 1)
 
-    # H2: BB frames — Independent t-test
-    ab_bb = subj_frame_acc[(subj_frame_acc['condition'] == 'AB') &
-                            (subj_frame_acc['frame_type'] == 'BB')]['accuracy']
-    nb_bb = subj_frame_acc[(subj_frame_acc['condition'] == 'NB') &
-                            (subj_frame_acc['frame_type'] == 'BB')]['accuracy']
-    t_bb, p_bb = stats.ttest_ind(ab_bb, nb_bb)
-    d_bb = cohens_d(ab_bb, nb_bb)
-    print(f"  H2 — BB frames: AB M={ab_bb.mean():.4f} vs NB M={nb_bb.mean():.4f}")
-    print(f"         Independent t-test: t={t_bb:.3f}, p={p_bb:.4f}, d={d_bb:.3f}")
-    verdict_h2 = "✓ SUPPORTED" if (p_bb < 0.05 and nb_bb.mean() > ab_bb.mean()) else "✗ NOT SUPPORTED"
-    print(f"         H2: {verdict_h2}")
-
-    # H3: EM frames — Independent t-test (expect p > 0.05)
-    ab_em = subj_frame_acc[(subj_frame_acc['condition'] == 'AB') &
-                            (subj_frame_acc['frame_type'] == 'EM')]['accuracy']
-    nb_em = subj_frame_acc[(subj_frame_acc['condition'] == 'NB') &
-                            (subj_frame_acc['frame_type'] == 'EM')]['accuracy']
-    t_em, p_em = stats.ttest_ind(ab_em, nb_em)
-    d_em = cohens_d(ab_em, nb_em)
-    print(f"  H3 — EM frames: AB M={ab_em.mean():.4f} vs NB M={nb_em.mean():.4f}")
-    print(f"         Independent t-test: t={t_em:.3f}, p={p_em:.4f}, d={d_em:.3f}")
-    verdict_h3 = "✓ SUPPORTED" if p_em > 0.05 else "✗ NOT SUPPORTED (EM also differs)"
-    print(f"         H3: {verdict_h3}")
-
     plt.tight_layout()
     plt.savefig(os.path.join(PLOT_DIR, 'h2_h3_frame_type.png'))
     plt.close()
+
+    # ─── Core inference function ─────────────────────────────────────────────
+    def _run_inference(frame_type, h_label, h_direction):
+        """Run the full normality-check → test pipeline for one frame type."""
+        ab_data = subj_frame_acc[
+            (subj_frame_acc['condition'] == 'AB') &
+            (subj_frame_acc['frame_type'] == frame_type)
+        ]['accuracy']
+        nb_data = subj_frame_acc[
+            (subj_frame_acc['condition'] == 'NB') &
+            (subj_frame_acc['frame_type'] == frame_type)
+        ]['accuracy']
+
+        print(f"\n{'─'*70}")
+        print(f"  {h_label} — {frame_type} frames")
+        print(f"  Prediction: {h_direction}")
+        print(f"{'─'*70}")
+
+        # Descriptive stats
+        print(f"\n  Descriptive Statistics (participant-level mean accuracy):")
+        print(f"  {'Group':<8} {'M':>8} {'SD':>8} {'Mdn':>8} {'n':>5}")
+        print(f"  {'-'*40}")
+        for grp, grp_data in [('AB', ab_data), ('NB', nb_data)]:
+            print(
+                f"  {grp:<8} {grp_data.mean():>8.4f} {grp_data.std():>8.4f} "
+                f"{grp_data.median():>8.4f} {len(grp_data):>5}"
+            )
+
+        # Step 1: Shapiro-Wilk normality check
+        print(f"\n  Step 1 — Shapiro-Wilk Normality Check:")
+        sw_ab_stat, sw_ab_p = stats.shapiro(ab_data)
+        sw_nb_stat, sw_nb_p = stats.shapiro(nb_data)
+        ab_normal = sw_ab_p > 0.05
+        nb_normal = sw_nb_p > 0.05
+        print(f"    AB: W = {sw_ab_stat:.4f}, p = {sw_ab_p:.4f}  → {'Normal ✓' if ab_normal else 'Non-Normal ✗'}")
+        print(f"    NB: W = {sw_nb_stat:.4f}, p = {sw_nb_p:.4f}  → {'Normal ✓' if nb_normal else 'Non-Normal ✗'}")
+        both_normal = ab_normal and nb_normal
+        print(f"    → Both groups normal: {both_normal}")
+
+        # Step 2: Branching test selection
+        print(f"\n  Step 2 — Test Selection & Results:")
+        if both_normal:
+            # Independent t-test
+            t_stat, p_val = stats.ttest_ind(ab_data, nb_data)
+            d_val = cohens_d(ab_data, nb_data)
+            df_val = len(ab_data) + len(nb_data) - 2
+            print(f"    Test used: Independent-samples t-test (both groups normal)")
+            print(f"\n    {'Stat':<6} {'Value':>10}")
+            print(f"    {'-'*20}")
+            print(f"    {'t':<6} {t_stat:>10.3f}")
+            print(f"    {'df':<6} {df_val:>10}")
+            print(f"    {'p':<6} {p_val:>10.4f}")
+            print(f"    {"Cohen's d":<6} {d_val:>10.3f}")
+            effect_label = f"Cohen's d = {d_val:.3f}"
+            test_used = f"t({df_val}) = {t_stat:.3f}, p = {p_val:.4f}"
+        else:
+            # Mann-Whitney U
+            u_stat, p_val = stats.mannwhitneyu(ab_data, nb_data, alternative='two-sided')
+            # Rank-biserial correlation as effect size
+            n_ab, n_nb = len(ab_data), len(nb_data)
+            r_rb = 1 - (2 * u_stat) / (n_ab * n_nb)
+            print(f"    Test used: Mann-Whitney U test (normality not met)")
+            print(f"\n    {'Stat':<20} {'Value':>10}")
+            print(f"    {'-'*34}")
+            print(f"    {'U':<20} {u_stat:>10.1f}")
+            print(f"    {'p (two-tailed)':<20} {p_val:>10.4f}")
+            print(f"    {'Rank-biserial r':<20} {r_rb:>10.3f}")
+            effect_label = f"Rank-biserial r = {r_rb:.3f}"
+            test_used = f"U = {u_stat:.1f}, p = {p_val:.4f}"
+
+        # Significance verdict
+        sig = p_val < 0.05
+        direction_correct = nb_data.mean() > ab_data.mean()  # always NB > AB is the direction for H2
+        print(f"\n  ── Summary Table ({h_label}) ──")
+        print(f"  {'Group':<6} {'M':>8} {'SD':>8} {'Mdn':>8} {'n':>5}")
+        print(f"  {'-'*40}")
+        for grp, grp_data in [('AB', ab_data), ('NB', nb_data)]:
+            print(f"  {grp:<6} {grp_data.mean():>8.4f} {grp_data.std():>8.4f} {grp_data.median():>8.4f} {len(grp_data):>5}")
+        print(f"  Test: {test_used}")
+        print(f"  Effect size: {effect_label}")
+
+        if h_label == 'H2':
+            if sig and direction_correct:
+                verdict = "✓ SUPPORTED — NB > AB for BB frames (p < 0.05)"
+            elif sig and not direction_correct:
+                verdict = "✗ NOT SUPPORTED — significant but wrong direction"
+            else:
+                verdict = "✗ NOT SUPPORTED — p ≥ 0.05"
+        else:  # H3: null = no difference, so want p > 0.05
+            if not sig:
+                verdict = "✓ SUPPORTED (null retained) — EM frames do not differ (p ≥ 0.05)"
+            else:
+                verdict = f"✗ NOT SUPPORTED — EM frames also differ significantly (p = {p_val:.4f})"
+
+        print(f"  {h_label}: {verdict}")
+        return p_val
+
+    # ─── H2: BB frames ────────────────────────────────────────────────────────
+    p_bb = _run_inference(
+        'BB', 'H2',
+        'NB participants show HIGHER BB-frame accuracy than AB (boundary advantage).'
+    )
+
+    # ─── H3: EM frames ────────────────────────────────────────────────────────
+    p_em = _run_inference(
+        'EM', 'H3',
+        'No significant condition difference for EM frames (boundary effect is specific).'
+    )
+
+    # ─── Step 3: Logistic GLM per frame type ─────────────────────────────────
+    print("\n" + "=" * 70)
+    print("Trial-Level Logistic GLM  (accuracy ~ condition)  per Frame Type")
+    print("=" * 70)
+    glm_bb = _run_logistic_glm_for_frame(trials_df, 'BB', 'H2')
+    glm_em = _run_logistic_glm_for_frame(trials_df, 'EM', 'H3')
+
+    # ─── Final combined clean summary ─────────────────────────────────────────
+    print("\n" + "=" * 70)
+    print("COMBINED SUMMARY: H2 & H3")
+    print(f"{'Hypothesis':<6} {'Frame':<6} {'AB M':>8} {'NB M':>8} {'Test Result':<30} {'Effect Size':<22} {'Sig?':>6}")
+    print("=" * 70)
+
+    ab_bb_m = subj_frame_acc[(subj_frame_acc['condition']=='AB') & (subj_frame_acc['frame_type']=='BB')]['accuracy'].mean()
+    nb_bb_m = subj_frame_acc[(subj_frame_acc['condition']=='NB') & (subj_frame_acc['frame_type']=='BB')]['accuracy'].mean()
+    ab_em_m = subj_frame_acc[(subj_frame_acc['condition']=='AB') & (subj_frame_acc['frame_type']=='EM')]['accuracy'].mean()
+    nb_em_m = subj_frame_acc[(subj_frame_acc['condition']=='NB') & (subj_frame_acc['frame_type']=='EM')]['accuracy'].mean()
+
+    # Recompute quick stats for display
+    ab_bb = subj_frame_acc[(subj_frame_acc['condition']=='AB')&(subj_frame_acc['frame_type']=='BB')]['accuracy']
+    nb_bb = subj_frame_acc[(subj_frame_acc['condition']=='NB')&(subj_frame_acc['frame_type']=='BB')]['accuracy']
+    ab_em = subj_frame_acc[(subj_frame_acc['condition']=='AB')&(subj_frame_acc['frame_type']=='EM')]['accuracy']
+    nb_em = subj_frame_acc[(subj_frame_acc['condition']=='NB')&(subj_frame_acc['frame_type']=='EM')]['accuracy']
+
+    sw_bb_ab_p = stats.shapiro(ab_bb)[1]; sw_bb_nb_p = stats.shapiro(nb_bb)[1]
+    sw_em_ab_p = stats.shapiro(ab_em)[1]; sw_em_nb_p = stats.shapiro(nb_em)[1]
+    bb_both_normal = sw_bb_ab_p > 0.05 and sw_bb_nb_p > 0.05
+    em_both_normal = sw_em_ab_p > 0.05 and sw_em_nb_p > 0.05
+
+    if bb_both_normal:
+        t_bb, p_bb2 = stats.ttest_ind(ab_bb, nb_bb)
+        d_bb = cohens_d(ab_bb, nb_bb)
+        bb_test_str = f"t({len(ab_bb)+len(nb_bb)-2}) = {t_bb:.3f}, p={p_bb2:.4f}"
+        bb_eff_str  = f"Cohen's d = {d_bb:.3f}"
+    else:
+        u_bb, p_bb2 = stats.mannwhitneyu(ab_bb, nb_bb, alternative='two-sided')
+        r_bb = 1 - (2*u_bb)/(len(ab_bb)*len(nb_bb))
+        bb_test_str = f"U = {u_bb:.1f}, p = {p_bb2:.4f}"
+        bb_eff_str  = f"r = {r_bb:.3f}"
+
+    if em_both_normal:
+        t_em, p_em2 = stats.ttest_ind(ab_em, nb_em)
+        d_em = cohens_d(ab_em, nb_em)
+        em_test_str = f"t({len(ab_em)+len(nb_em)-2}) = {t_em:.3f}, p={p_em2:.4f}"
+        em_eff_str  = f"Cohen's d = {d_em:.3f}"
+    else:
+        u_em, p_em2 = stats.mannwhitneyu(ab_em, nb_em, alternative='two-sided')
+        r_em = 1 - (2*u_em)/(len(ab_em)*len(nb_em))
+        em_test_str = f"U = {u_em:.1f}, p = {p_em2:.4f}"
+        em_eff_str  = f"r = {r_em:.3f}"
+
+    print(f"{'H2':<6} {'BB':<6} {ab_bb_m:>8.4f} {nb_bb_m:>8.4f} {bb_test_str:<30} {bb_eff_str:<22} {'Yes*' if p_bb < 0.05 else 'No':>6}")
+    print(f"{'H3':<6} {'EM':<6} {ab_em_m:>8.4f} {nb_em_m:>8.4f} {em_test_str:<30} {em_eff_str:<22} {'Yes*' if p_em < 0.05 else 'No':>6}")
+
+    if glm_bb:
+        print(f"\n  GLM (BB): OR = {glm_bb['or']:.3f}, z = {glm_bb['z']:.3f}, p = {glm_bb['p']:.4f}")
+    if glm_em:
+        print(f"  GLM (EM): OR = {glm_em['or']:.3f}, z = {glm_em['z']:.3f}, p = {glm_em['p']:.4f}")
+
+    print("=" * 70)
 
     return [('H2_BB', p_bb), ('H3_EM', p_em)]
 

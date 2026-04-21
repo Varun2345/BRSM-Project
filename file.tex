@@ -10,13 +10,10 @@
 \usepackage{float}
 \usepackage{array}
 \usepackage{tabularx}
-\usepackage{ragged2e}
-\usepackage{microtype}
 \usepackage{parskip}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{hanging}
 
 % Section spacing — tighter than default
 \titlespacing*{\section}      {0pt}{1.4ex plus 0.5ex minus 0.2ex}{0.6ex plus 0.2ex}
@@ -32,8 +29,8 @@
 
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
-% Custom ragged column type
-\newcolumntype{L}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
+% Custom ragged column type (uses standard p-column, no ragged2e needed)
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 % ── Caption setup ──────────────────────────────────────────────────────────────
 \captionsetup{labelsep=period, font=small, skip=4pt}
@@ -251,7 +248,7 @@ $H_A$              & Demographic distributions differ significantly \\
 
 \subsection*{4.4\quad Statistical Analysis}
 
-Normality of distributions was verified using the Shapiro-Wilk test and homogeneity of variance using Levene's test before each inferential test. Because the data violated normality for two conditions for H1, we used **Mann-Whitney U test**. For H4, where the NB group's difference scores were non-normal, the Wilcoxon Signed-Rank test was substituted for the paired $t$-test. For H6 age, where both group distributions were non-normal, the Mann-Whitney U test was used. The significance threshold was $\alpha = 0.05$ throughout. Also implemented regression models in H1 \& H5 to evaluate predictive effects without losing trial-level variability.
+Normality of distributions was verified using the Shapiro-Wilk test before each inferential test. Because the data violated normality for H1 (accuracy and RT), H2 (BB frames), and H3 (EM frames) across both groups, we used the non-parametric \textbf{Mann-Whitney U test} in all these cases. For H4, where the NB group's difference scores were non-normal ($W = 0.967, p = .025$), the Wilcoxon Signed-Rank test was substituted for the paired $t$-test. For H6 age, the Mann-Whitney U test was similarly applied. In addition to these participant-level tests, we fitted \textbf{trial-level Logistic GLMs} (accuracy $\sim$ condition) separately for BB frames (H2) and EM frames (H3) to obtain Odds Ratios and confirm that condition remains a significant predictor at the trial level. Variance Inflation Factor (VIF) checks confirmed predictor independence ($VIF = 1.000$ for condition in all models). The significance threshold was $\alpha = 0.05$ throughout.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section*{5.\quad Results}
@@ -288,24 +285,24 @@ Contrary to our prediction, both group medians (which provide a good measure alo
 
 \textbf{Rationale:} The boundary advantage predicts that frames just before a natural boundary benefit from heightened perceptual and attentional processing. In the AB condition, the artificial early cut eliminates this encoding boost for BB frames.
 
-Normality tests showed non-normal distributions, but sample sizes were sufficient. Variance homogeneity was confirmed.
+\textbf{Normality check.} The Shapiro-Wilk test confirmed that BB-frame accuracy was significantly non-normal in both the AB group ($W = 0.946, p = .002$) and the NB group ($W = 0.925, p < .001$). Consequently, the independent-samples $t$-test was replaced by the \textbf{Mann-Whitney U test}.
 
 \begin{table}[H]
     \centering\small
     \caption*{Table 5.1.\; Mean BB-frame recognition accuracy}
-    \begin{tabular}{@{} l c c c @{}}
+    \begin{tabular}{@{} l c c c c @{}}
         \toprule
-        Group & $M$   & $SD$  & $n$ \\
+        Group & $M$   & $SD$  & $Mdn$ & $n$ \\
         \midrule
-        AB    & 0.822 & 0.105 & 78  \\
-        NB    & 0.857 & 0.097 & 88  \\
+        AB    & 0.823 & 0.106 & 0.850 & 77  \\
+        NB    & 0.855 & 0.096 & 0.850 & 87  \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-NB participants ($M = 0.857$) achieved significantly higher BB-frame accuracy than AB participants ($M = 0.822$), $t(164) = -2.195$, $p = .030$, indicating that the natural encoding boost for boundary-adjacent frames is weakened when the boundary is artificially cut off.
+NB participants ($M = 0.855$, $Mdn = 0.850$) achieved significantly higher BB-frame accuracy than AB participants ($M = 0.823$, $Mdn = 0.850$): $U = 2705.5$, $p = .032$, rank-biserial $r = 0.192$. This confirms that the natural encoding boost for boundary-adjacent frames is weakened when the boundary is cut short. A trial-level \textbf{Logistic GLM} (accuracy $\sim$ condition, BB trials only) corroborated this finding: being in the NB condition significantly increased the log-odds of a correct response ($B = 0.241$, $z = 2.526$, $p = .012$, $OR = 1.272$; $VIF_{\text{condition}} = 1.000$).
 
-\textbf{H2:} Since $t(164) = -2.195$ and $p = .030 < \alpha = .05$, we \textbf{reject the null hypothesis} and \textbf{support the alternative hypothesis} ($H_A$: NB participants show higher BB-frame accuracy than AB participants).
+\textbf{H2:} Since $U = 2705.5$ and $p = .032 < \alpha = .05$ (GLM $p = .012$), we \textbf{reject the null hypothesis} and \textbf{support the alternative hypothesis} ($H_A$: NB participants show higher BB-frame accuracy than AB participants). Effect size is small-to-medium (rank-biserial $r = 0.192$).
 
 \subsection*{5.3\quad H3 --- Recognition Accuracy for Event-Middle Frames}
 
@@ -313,22 +310,24 @@ NB participants ($M = 0.857$) achieved significantly higher BB-frame accuracy th
 
 \textbf{Rationale:} If the boundary effect only strengthens memory for moments immediately surrounding the boundary, frames from the event middle should be encoded similarly regardless of condition.
 
+\textbf{Normality check.} The Shapiro-Wilk test confirmed non-normality for EM-frame accuracy in both the AB group ($W = 0.923, p < .001$) and the NB group ($W = 0.914, p < .001$). Consequently, the \textbf{Mann-Whitney U test} was used.
+
 \begin{table}[H]
     \centering\small
     \caption*{Table 5.2.\; Mean EM-frame recognition accuracy}
-    \begin{tabular}{@{} l c c c @{}}
+    \begin{tabular}{@{} l c c c c @{}}
         \toprule
-        Group & $M$   & $SD$  & $n$ \\
+        Group & $M$   & $SD$  & $Mdn$ & $n$ \\
         \midrule
-        AB    & 0.853 & 0.093 & 78  \\
-        NB    & 0.884 & 0.079 & 88  \\
+        AB    & 0.852 & 0.093 & 0.850 & 77  \\
+        NB    & 0.884 & 0.080 & 0.900 & 87  \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Contrary to prediction, NB participants ($M = 0.884$) were also significantly more accurate on EM frames than AB participants ($M = 0.853$), $t(164) = -2.319$, $p = .022$. The accuracy drop in the AB group was uniform across both BB and EM frames, suggesting that an abrupt cut hurts memory for the whole clip.
+Contrary to prediction, NB participants ($M = 0.884$, $Mdn = 0.900$) were also significantly more accurate on EM frames than AB participants ($M = 0.852$, $Mdn = 0.850$): $U = 2648.0$, $p = .019$, rank-biserial $r = 0.209$. A trial-level \textbf{Logistic GLM} (accuracy $\sim$ condition, EM trials only) confirmed the condition effect: being in the NB condition significantly increased accuracy log-odds ($B = 0.280$, $z = 2.701$, $p = .007$, $OR = 1.323$; $VIF_{\text{condition}} = 1.000$). The accuracy drop in the AB group was uniform across both BB and EM frames, suggesting that an abrupt cut impairs memory for the entire clip, not only boundary-adjacent content.
 
-\textbf{H3:} Since $t(164) = -2.319$ and $p = .022 < \alpha = .05$ at the raw level, we \textbf{fail to retain the null hypothesis} ($H_0$: no difference in EM-frame accuracy) in the uncorrected test.
+\textbf{H3:} Since $U = 2648.0$ and $p = .019 < \alpha = .05$ (GLM $p = .007$), we \textbf{fail to retain the null hypothesis} ($H_0$: no difference in EM-frame accuracy). Contrary to prediction, the boundary disruption generalises beyond BB frames.
 
 \begin{figure}[H]
     \centering
@@ -465,8 +464,9 @@ Confidence was the strongest independent predictor of accuracy; for every 1-poin
 \section*{7.\quad Summary of Findings}
 
 \begin{itemize}
-    \item \textbf{Accuracy (H1a):} Cutting a clip early significantly reduced recognition accuracy, as confirmed by the non-parametric tests ($U=2550.5, p=.0042$) and trial-level Logistic Regression models ($p<.001$). The effects were statistically significant for accuracy.
-    \item \textbf{EM frames (H3):} The EM accuracy difference was also significant at the raw level ($p = .022$), contradicting the prediction of no difference. The boundary disruption appears to impair the whole event clip, not just boundary-adjacent frames.
+    \item \textbf{Accuracy (H1a):} Cutting a clip early significantly reduced recognition accuracy, confirmed by Mann-Whitney U ($U=2550.5, p=.0042$) and trial-level Logistic Regression ($p<.001$).
+    \item \textbf{BB frames (H2):} Shapiro-Wilk confirmed non-normality in both groups; Mann-Whitney U ($U = 2705.5$, $p = .032$, rank-biserial $r = 0.192$) showed NB participants were significantly more accurate on BB frames. Trial-level GLM corroborated: $OR = 1.272$, $p = .012$. The boundary advantage for encoding-adjacent frames is real.
+    \item \textbf{EM frames (H3):} Contrary to prediction, EM accuracy also differed significantly ($U = 2648.0$, $p = .019$, $r = 0.209$; GLM: $OR = 1.323$, $p = .007$). The boundary disruption impairs memory for the entire clip, not only boundary-adjacent frames.
     \item \textbf{RT (H1b):} No significant diff; NB participants were little \textit{slower}, removing a speed--accuracy trade-off.
     \item \textbf{Confidence (H4):} Strongest result --- participants were substantially more confident when correct than incorrect (AB: $d = 1.42$; NB: $r = 0.97$), demonstrating reliable metacognitive sensitivity.
     \item \textbf{Confidence by frame type (H5):} The AB group showed \textit{lower} confidence for BB than EM frames --- the opposite of the prediction. No effect in the NB group.
@@ -476,7 +476,7 @@ Confidence was the strongest independent predictor of accuracy; for every 1-poin
 
 
 \section*{8\quad References}
-\begin{hangparas}{2em}{1}
+{\setlength{\parindent}{-2em}\setlength{\leftskip}{2em}\setlength{\parskip}{4pt}
 
 Cutting, J. E., Brunick, K. L., \& Candan, A. (2012). Perceiving event boundaries in motion pictures. \textit{Psychology of Aesthetics, Creativity, and the Arts}, \textit{6}(4), 323--330.
 
@@ -486,7 +486,7 @@ Swallow, K. M., Zacks, J. M., \& Abrams, R. A. (2009). Event boundaries in perce
 
 Zacks, J. M., Speer, N. K., Swallow, K. M., Braver, T. S., \& Reynolds, J. R. (2007). Event perception: A mind-brain perspective. \textit{Psychological Bulletin}, \textit{133}(2), 273--293.
 
-\end{hangparas}
+}
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section*{9.\quad Contributions}

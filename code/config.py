@@ -8,8 +8,9 @@ warnings.filterwarnings('ignore')
 matplotlib.use('Agg')
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(ROOT_DIR, "BRSM data", "BRSM data csv")
-DEMO_FILE = os.path.join(ROOT_DIR, "BRSM data", "Demographic data.xlsx")
+# Data lives one level above the project folder
+DATA_DIR = os.path.join(os.path.dirname(ROOT_DIR), "BRSM data csv")
+DEMO_FILE = os.path.join(os.path.dirname(ROOT_DIR), "Demographic data.xlsx")
 
 PLOT_DIR = os.path.join(ROOT_DIR, "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
