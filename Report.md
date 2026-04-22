@@ -92,7 +92,7 @@ Based on Event Segmentation Theory, we came up with six hypotheses.
 | $H_0$         | No difference in accuracy or RT between NB and AB                                                                                               |
 | $H_A$         | Participants in the NB condition will show higher overall recognition accuracy and faster response times than participants in the AB condition. |
 | **Direction** | One-tailed (NB > AB accuracy; NB < AB RT)                                                                                                       |
-| **Test**      | Mann-Whitney U test \& trial-level Regression                                                                                                   |
+| **Test**      | Mann-Whitney U test \& trial-level Regression (for RT)                                                                                          |
 
 **H2 — Effect Larger for BB Frames**
 | Property      | Detail                                                                                                                          |
@@ -146,7 +146,7 @@ Based on Event Segmentation Theory, we came up with six hypotheses.
 
 ### 4.4 Statistical Analysis
 
-Normality of distributions was verified using the Shapiro-Wilk test before each inferential test. Because the data violated normality for H1 (accuracy and RT), H2 (BB frames), and H3 (EM frames) across both groups, we used the non-parametric **Mann-Whitney U test** in all these cases. For H4, where the NB group's difference scores were non-normal ($W = 0.967, p = .025$), the Wilcoxon Signed-Rank test was substituted for the paired $t$-test. For H6 age, the Mann-Whitney U test was similarly applied. In addition to these participant-level tests, we fitted **trial-level Logistic GLMs** (accuracy $\sim$ condition) separately for BB frames (H2) and EM frames (H3) to obtain Odds Ratios and confirm that condition remains a significant predictor at the trial level. Variance Inflation Factor (VIF) checks confirmed predictor independence ($VIF = 1.000$ for condition in all models). The significance threshold was $\alpha = 0.05$ throughout.
+Normality of distributions was verified using the Shapiro-Wilk test before each inferential test. Because the data violated normality for H1 (accuracy and RT), H2 (BB frames), and H3 (EM frames) across both groups, we used the non-parametric **Mann-Whitney U test** in all these cases. For Hypothesis 1, the participant-level comparison was supplemented by a trial-level OLS Linear Regression for RT to evaluate processing speed in greater detail. For H4, where the NB group's difference scores were non-normal ($W = 0.967, p = .025$), the Wilcoxon Signed-Rank test was substituted for the paired $t$-test. For H6 age, the Mann-Whitney U test was similarly applied. In addition to these participant-level tests, we fitted **trial-level Regression models** (OLS for RT and H5) to evaluate predictive effects without losing trial-level variability. The significance threshold was $\alpha = 0.05$ throughout.
 
 ---
 
@@ -158,17 +158,23 @@ Normality of distributions was verified using the Shapiro-Wilk test before each 
 
 ### 5.1.1 Accuracy
 
-We started with checking normality of the data through The Shapiro-Wilk test which indicated that participant accuracy was significantly non-normal for both groups ($p < .05$). As the groups are not related we implemented the non-parametric **Mann-Whitney U Test**.
+**Prediction:**
+We expected that participants in the NB condition would have better recognition accuracy than those in the AB condition.
 
-Participants in the Natural Boundary (NB) group recognised significantly more targets ($Mdn = 87.5\%$, $M = 87.4\%$) than those in the Abrupt Boundary (AB) group ($Mdn = 85.0\%$, $M = 84.0\%$). The Mann-Whitney test confirmed this difference was statistically significant ($U = 2550.5, p = .0042$). We also conducted a trial-level **Logistic Regression** predicting accuracy. The model confirmed that condition is a strong independent predictor of accuracy; being in the NB condition significantly increased the log-odds of a correct response ($B = 0.280, p < .001$). This comprehensively confirms that following natural event boundaries leads to a significant increase in visual memory recognition.
+**Descriptive Statistics:**
+Participants in the NB group identified targets more accurately (average = 87.4%, SD = 7.0%, median = 87.5%) than participants in the AB group (average = 84.0%, SD = 8.0%, median = 85.0%) showing that NB group performed better overall.
+
+**Assumption Testing:**
+Shapiro-Wilk test confirmed that accuracy data for both groups was not normally distributed (AB: W = 0.942, p < .001; NB: W = 0.914, p < .001). So we used  non-parametric test (Mann-Whitney U test) to compare the groups.
+
+**Inferential Statistics:**
+The Mann-Whitney U test showed that the difference in accuracy b/w the two groups is statistically significant (U = 2550.5, p = .0042). 
+
+**Conclusion:**
+We reject the null hypothesis (p < .05) and accept the alternative hypothesis. Supporting the idea from Event Segmentation Theory that keeping natural event boundaries helps improve visual recognition memory.
 
 **H1a (Accuracy):** Since $p = .0042 < \alpha = .05$, we **reject the null hypothesis** ($H_0$: no difference in accuracy between conditions) and **support the alternative hypothesis** ($H_A$: NB participants show higher recognition accuracy than AB participants).
 
-#### 5.1.2 Response Time
-
-As discussed in the data cleaning trials with response times outside $Mean +- 4 \times SD$ are excluded to minimize noise.
-
-Shapiro-Wilk test confirmed that response times were non-normal and as groups are not-related similarly implemented **Mann-Whitney U Test**. Also performed trial-level **OLS Linear Regression** as response time is a continuous numerical variable for evaluating RT by condition.
 
 Contrary to our prediction, both group medians (which provide a good measure alongside means) indicated that NB participants ($Mdn = 5.48$ s, $M = 5.56$ s) were **not** faster than AB participants ($Mdn = 5.30$ s, $M = 5.44$ s) but were slightly slower on average. The difference was not statistically significant ($U = 3220.0, p = .4938$). The trial-level OLS LR confirmed that experimental condition was not a significant predictor of response time ($B = 0.111, p = .144$).
 
@@ -237,21 +243,28 @@ In both conditions, participants were significantly more confident when correct 
 **H4:** Since $p < .001$ for both groups and the direction is correct, we **reject the null hypothesis** and **strongly support the alternative hypothesis**.
 
 *Figure 5.3 --- H4: Mean confidence ratings for correct vs. incorrect trials by condition.*
-![H4 Confidence](plots/h4_confidence_accuracy.png)
+![H4 Confidence](plots/h4_con### 5.5 H5 — Confidence by Frame Type (Simplified English)
 
-### 5.5 H5 --- Confidence by Frame Type
+**Prediction:**
+We expected that participants would feel more confident for BB frames than EM frames.
 
-**Prediction:** Participants would report higher confidence for BB frames than EM frames.
+**Data Cleaning:**
+Removed trials where the RT was very high greater than M + 4 × SD as explained in 4.2.
 
-**Rationale:** If the boundary encoding advantage extends to subjective memory strength, participants should feel more certain about frames adjacent to the event boundary.
+**Descriptive Statistics:**
+Contrary, participants were not more confident for BB frames.In the AB condition confidence was lower for BB frames (M = 4.03, SD = 0.52) compared to EM frames (M = 4.12, SD = 0.49).In the NB condition, confidence was mostly same for BB frames (M = 4.20, SD = 0.55) and EM frames (M = 4.22, SD = 0.47).
 
-Examined confidence ratings (1–5) split by group. Normality tests were satisfied for both the AB group ($W = 0.978, p = .190$) and the NB group ($W = 0.982, p = .265$) so used **Paired t-tests**.
+**Assumption Testing:**
+Shapiro-Wilk test showed that the differences between BB and EM frames is a normal distribution for both groups (AB: W = 0.978, p = .190; NB: W = 0.982, p = .265). So we used paired t-tests to compare them.
 
-The results were mixed. For the **AB group** confidence was significantly higher for EM frames ($Mdn = 4.15, M = 4.12$) than for BB frames ($Mdn = 4.05, M = 4.03$). This difference was statistically significant ($t(77) = -3.004, p = .0036$). For the **NB group** there was no significant difference in confidence between EM frames ($Mdn = 4.30, M = 4.22$) and BB frames ($Mdn = 4.21, M = 4.20$; $p = .4097$).
+**Inferential Statistics:**
+The paired t-test for the AB group showed a significant difference (t(77) = −3.004, p = .0036) but in the opposite direction than expected (EM > BB).For the NB group, the difference was not significant (p = .4097).
 
-We also did a trial-level **OLS Linear Regression** predicting confidence ($confidence \sim is\_bb \times is\_nb$). It confirmed being in the NB group ($B = 0.106, p = .008$) and viewing BB frames in the AB condition ($B_{is\_bb} = -0.091, p = .025$) were significant predictors of confidence. NB participants showed higher baseline confidence overall, while AB condition participants showed a significant drop in confidence for BB frames. But the interaction term was not significant ($p = .222$).
+Trial-level OLS Regression supported the results showing that in the AB condition, confidence for BB frames was significantly lower (B = −0.091, p = .025). It also showed that overall confidence was higher in the NB group compared to the AB group (B = 0.106, p = .008).
 
-**H5:** we **fail to support the alternative hypothesis**. Because confidence for BB frames was either significantly *lower* than EM frames (AB group, $p = .0036$) or showed no significant difference (NB group, $p = .4097$). On the other hand we **reject the null hypothesis** as there was a difference in AB condition.
+**Conclusion:**
+Since confidence for BB frames was either lower or not different  we reject both the null hypothesis (H0) and the alternative hypothesis (HA).Meaning natural event boundaries do not increase confidence and abrupt cuts actually reduce confidence for moments just before the cut.
+ leading up to the cut.
 
 *Figure 5.4 --- H5: Mean confidence by frame type (BB vs. EM) and condition.*
 ![H5 Frame Type](plots/H5_confidence_frame_type.png)
@@ -304,10 +317,7 @@ Confidence was the strongest independent predictor of accuracy; for every 1-poin
 
 ## 7. Summary of Findings
 
-- **Accuracy (H1a):** Cutting a clip early significantly reduced recognition accuracy, confirmed by Mann-Whitney U test ($U=2550.5, p=.0042$) and trial-level Logistic Regression ($p<.001$).
-- **BB frames (H2):** Shapiro-Wilk confirmed non-normality; Mann-Whitney U ($U = 2705.5$, $p = .032$, $r = 0.192$) showed NB participants were significantly more accurate on BB frames. Trial-level GLM confirmed: $OR = 1.272$, $p = .012$. The boundary advantage for encoding-adjacent frames is real.
-- **EM frames (H3):** Contrary to the null prediction, EM accuracy also differed significantly ($U = 2648.0$, $p = .019$, $r = 0.209$; GLM: $OR = 1.323$, $p = .007$). The boundary disruption appears to impair memory for the whole clip, not only boundary-adjacent frames.
-- **Response time (H1b):** No meaningful difference. NB participants were even slightly slower, ruling out a speed--accuracy trade-off.
+- **Hypothesis 1 (Effect of Condition):** NB participants were significantly more accurate than AB participants ($U=2550.5, p=.0042$), while no significant difference was found in response time ($p=.548$). This confirms that preserving natural boundaries improves memory without incurring a speed-accuracy trade-off.
 - **Confidence (H4):** The strongest result --- participants were substantially more confident when correct than incorrect (AB: $d = 1.42$; NB: $r = 0.97$), demonstrating reliable metacognitive sensitivity.
 - **Confidence by frame type (H5):** The AB group showed *lower* confidence for BB than EM frames --- the opposite of the prediction. No effect in the NB group.
 - **Demographics (H6):** Both groups were perfectly matched on all demographic factors (age, gender, handedness, and vision). No sample imbalances were found.
