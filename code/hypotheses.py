@@ -457,7 +457,7 @@ def plot_h4_confidence_accuracy(trials_df):
     valid = trials_df.dropna(subset=['confidence', 'accuracy', 'condition'])
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    fig.suptitle('H4: Confidence–Accuracy Calibration\n(Paired t-test: correct vs incorrect)',
+    fig.suptitle('H4: Confidence–Accuracy Calibration',
                  fontsize=14, fontweight='bold')
 
     # Calibration curve
@@ -609,7 +609,7 @@ def plot_h6_demographics(trials_df, demo_df):
     demo_valid['condition'] = demo_valid['demo_condition']
 
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    fig.suptitle('H6: Demographic Balance — AB vs NB\n(t-test for age, chi-square for categorical)',
+    fig.suptitle('H6: Demographic Balance — AB vs NB)',
                  fontsize=14, fontweight='bold', y=1.02)
 
     # Age — KDE density distribution
